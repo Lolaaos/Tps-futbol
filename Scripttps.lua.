@@ -1,0 +1,95 @@
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TitleLabel = Instance.new("TextLabel")
+local Button1 = Instance.new("TextButton")
+local Button2 = Instance.new("TextButton")
+local ToggleButton = Instance.new("TextButton") -- Botón para minimizar/maximizar
+local CloseButton = Instance.new("TextButton") -- Botón para cerrar
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(0, 255, 150)
+Frame.Size = UDim2.new(0, 300, 0, 150)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -75)
+Frame.Active = true
+Frame.Draggable = true
+
+TitleLabel.Parent = Frame
+TitleLabel.Size = UDim2.new(1, 0, 0, 30)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(255, 20, 147)
+TitleLabel.Text = "Mod Menu"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextSize = 20
+TitleLabel.TextScaled = true
+
+Button1.Parent = Frame
+Button1.Size = UDim2.new(1, 0, 0, 40)
+Button1.Position = UDim2.new(0, 0, 0, 40)
+Button1.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+Button1.Text = "Aumentar Alcance"
+Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local alcance = 10
+
+Button1.MouseButton1Click:Connect(function()
+    alcance = 10
+    print("Alcance aumentado a distancia lejana.")
+end)
+
+Button2.Parent = Frame
+Button2.Size = UDim2.new(1, 0, 0, 40)
+Button2.Position = UDim2.new(0, 0, 0, 90)
+Button2.BackgroundColor3 = Color3.fromRGB(50, 50, 255)
+Button2.Text = "Disminuir Alcance"
+Button2.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+Button2.MouseButton1Click:Connect(function()
+    alcance = 2
+    print("Alcance disminuido a distancia corta.")
+end)
+
+local function golpearPelota()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    
+    local rayOrigin = humanoidRootPart.Position
+    local rayDirection = humanoidRootPart.CFrame.LookVector * alcance
+
+    local raycastResult = workspace:Raycast(rayOrigin, rayDirection)
+
+    if raycastResult and raycastResult.Instance and raycastResult.Instance.Name == "CueBall" then
+        print("¡Golpeaste la pelota desde " .. alcance .. " metros!")
+    else
+        print("No hay pelota en el alcance de " .. alcance .. " metros.")
+    end
+end
+
+ToggleButton.Parent = Frame
+ToggleButton.Size = UDim2.new(0, 30, 0, 30)
+ToggleButton.Position = UDim2.new(1, -35, 0, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+ToggleButton.Text = "-"
+ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+local isMinimized = false
+
+ToggleButton.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    Frame.Size = isMinimized and UDim2.new(0, 300, 0, 30) or UDim2.new(0, 300, 0, 150)
+    Button1.Visible = not isMinimized
+    Button2.Visible = not isMinimized
+    ToggleButton.Text = isMinimized and "+" or "-"
+end)
+
+CloseButton.Parent = Frame
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -70, 0, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
